@@ -21,7 +21,7 @@ const int MOTOR_BUTTON_PIN = 11;
 const int MOTOR_PIN_OUT = 3;
 const int MOTOR_SPEEDUP_DELAY = 120;
 const int MOTOR_SLOWDOWN_DELAY = 40;
-const int MOTOR_SPEED_MAX = 255;
+const int MOTOR_SPEED_MAX = 64;
 
 bool motor_on = false;
 int motor_counter = 0;
@@ -211,8 +211,8 @@ inline void motor_code() {
             lcd.print("                ");
         }
 
-        delay(MOTOR_SPEEDUP_DELAY);
         analogWrite(MOTOR_PIN_OUT, motor_counter);
+        delay(MOTOR_SPEEDUP_DELAY);
 
         update_motor_speed();
     } else if (!motor_on && motor_counter > 0) {
@@ -256,7 +256,7 @@ void loop() {
         motor_code();
     }
 
-    if (!uv_on) {
+    if (!uv_on && is_motor_stopped()) {
         glass_code();
     }
 
