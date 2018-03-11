@@ -106,6 +106,7 @@ void uv_turn_off() {
 }
 
 void update_encoder_num() {
+    // Update UV minutes on display
     lcd.setCursor(10, 0);
     lcd.print("   ");
     lcd.setCursor(10, 0);
@@ -129,6 +130,7 @@ void check_encoder_button() {
 }
 
 inline void encoder_code() {
+    // Set up UV delay
     int n = digitalRead(ENCODER_PIN_A);
     if ((encoder_pin_A_last == LOW) && (n == HIGH)) {
         if (digitalRead(ENCODER_PIN_B) == LOW) {
@@ -148,11 +150,13 @@ inline void encoder_code() {
 
     check_encoder_button();
 
+    // If encoder button is pressed
     if (uv_on) {
         if (encoder_pos > 0) {
             encoder_pos --;
             update_encoder_num();
 
+            // Split every minute into short delays to enable responsive button
             int i;
             for(i = 0; i < 60000 / ENCODER_DELAY; i++) {
                 delay(ENCODER_DELAY);
@@ -168,6 +172,7 @@ inline void encoder_code() {
 }
 
 void update_motor_speed() {
+    // Update motor speed on display
     lcd.setCursor(12, 0);
     lcd.print("    ");
     lcd.setCursor(12, 0);
