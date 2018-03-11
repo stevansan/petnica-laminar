@@ -17,7 +17,7 @@ int encoder_pos = 0;
 int encoder_pin_A_last = LOW;
 bool uv_on = false;
 
-const int MOTOR_BUTTON_PIN = 2;
+const int MOTOR_BUTTON_PIN = 11;
 const int MOTOR_PIN_OUT = 3;
 const int MOTOR_SPEEDUP_DELAY = 120;
 const int MOTOR_SLOWDOWN_DELAY = 40;
@@ -26,10 +26,10 @@ const int MOTOR_SPEED_MAX = 255;
 bool motor_on = false;
 int motor_counter = 0;
 
-const int GLASS_BUTTON_PIN_UP = 4;
-const int GLASS_BUTTON_PIN_DOWN = 5;
-const int GLASS_SENSOR_PIN_UP = 6;
-const int GLASS_SENSOR_PIN_DOWN = 7;
+const int GLASS_BUTTON_PIN_UP = 12;
+const int GLASS_BUTTON_PIN_DOWN = 13;
+const int GLASS_SENSOR_PIN_UP = A2;
+const int GLASS_SENSOR_PIN_DOWN = A3;
 const int GLASS_MOVE_PIN_UP = A0;
 const int GLASS_MOVE_PIN_DOWN = A1;
 
