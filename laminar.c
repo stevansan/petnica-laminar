@@ -1,11 +1,7 @@
-#include <ACPWM.h>
 #include <Wire.h>
 #include <LiquidCrystal_PCF8574.h>
 
 LiquidCrystal_PCF8574 lcd(0x27);
-
-const int ZERO_PIN = 11; //Input pin from zero cross detector
-const int PWM_PIN = 12; //Output pin to TRIAC / SSR
 
 // Enkoder i njegov taster
 const int ENCODER_PIN_A = 8;
@@ -22,8 +18,10 @@ int encoder_pin_A_last = LOW;
 bool uv_on = false;
 
 const int MOTOR_BUTTON_PIN = 2;
-const int MOTOR_SPEEDUP_DELAY = 90;
-const int MOTOR_SLOWDOWN_DELAY = 10;
+const int MOTOR_PIN_OUT = 3;
+const int MOTOR_SPEEDUP_DELAY = 120;
+const int MOTOR_SLOWDOWN_DELAY = 40;
+const int MOTOR_SPEED_MAX = 255;
 
 bool motor_on = false;
 int motor_counter = 0;
@@ -64,18 +62,7 @@ void setup() {
     pinMode(GLASS_MOVE_PIN_DOWN, OUTPUT);
 
     pinMode(MOTOR_BUTTON_PIN, INPUT_PULLUP);
-
-    // ACPWM setup
-    pinMode(ZERO_PIN, INPUT);
-    pinMode(PWM_PIN, OUTPUT);
-    //Initialize PWM operation.
-    //Mains frequency: 50Hz.
-    //Zero crossing point reached whenever pulse to PIN2 changes
-    //Duty cycle = 0..255. 0:always off. 255: always on. 150: 59% on.
-    ACpwm.initialize(50, ZERO_PIN, CHANGE, PWM_PIN, 255);
-    //Latching on HIGH zero state: 3 microseconds.
-    //Latching on LOW zero cross state: 5 microseconds.
-    ACpwm.setLatch(3, 5);
+    pinMode(MOTOR_PIN_OUT, OUTPUT);
 }
 
 void uv_turn_on() {
@@ -173,9 +160,9 @@ inline void encoder_code() {
 
 void update_motor_speed() {
     // Update motor speed on display
-    lcd.setCursor(12, 0);
-    lcd.print("    ");
-    lcd.setCursor(12, 0);
+    lcd.setCursor(13, 0);
+    lcd.print("   ");
+    lcd.setCursor(13, 0);
     lcd.print(motor_counter);
 }
 
@@ -195,7 +182,7 @@ void motor_turn_off() {
     update_motor_speed();
 
     motor_on = false;
-    ACpwm.setDutyCycle(0);
+    analogWrite(MOTOR_PIN_OUT, 0);
 }
 
 inline void check_motor_button() {
@@ -215,15 +202,15 @@ inline void check_motor_button() {
 inline void motor_code() {
     check_motor_button();
 
-    if (motor_on && motor_counter < 1024) {
+    if (motor_on && motor_counter < MOTOR_SPEED_MAX) {
         motor_counter++;
-        if (motor_counter == 1024) {
+        if (motor_counter == MOTOR_SPEED_MAX) {
             lcd.setCursor(0, 1);
             lcd.print("                ");
         }
 
         delay(MOTOR_SPEEDUP_DELAY);
-        ACpwm.setDutyCycle(motor_counter);
+        analogWrite(MOTOR_PIN_OUT, motor_counter);
 
         update_motor_speed();
     } else if (!motor_on && motor_counter > 0) {
