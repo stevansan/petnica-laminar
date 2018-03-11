@@ -26,10 +26,10 @@ const int MOTOR_SPEED_MAX = 255;
 bool motor_on = false;
 int motor_counter = 0;
 
-const int GLASS_BUTTON_PIN_UP = 3;
-const int GLASS_BUTTON_PIN_DOWN = 4;
-const int GLASS_SENSOR_PIN_UP = 5;
-const int GLASS_SENSOR_PIN_DOWN = 6;
+const int GLASS_BUTTON_PIN_UP = 4;
+const int GLASS_BUTTON_PIN_DOWN = 5;
+const int GLASS_SENSOR_PIN_UP = 6;
+const int GLASS_SENSOR_PIN_DOWN = 7;
 const int GLASS_MOVE_PIN_UP = A0;
 const int GLASS_MOVE_PIN_DOWN = A1;
 
@@ -189,13 +189,15 @@ inline void check_motor_button() {
     if (digitalRead(MOTOR_BUTTON_PIN) == LOW) {
         if (motor_on) {
             motor_turn_off();
+
+            delay(LATCH_BUTTON_DELAY);
         } else {
             if (motor_counter == 0) {
                 motor_turn_on();
+
+                delay(LATCH_BUTTON_DELAY);
             }
         }
-
-        delay(LATCH_BUTTON_DELAY);
     }
 }
 
@@ -229,11 +231,13 @@ inline void glass_code() {
 }
 
 inline bool is_glass_up() {
-    return digitalRead(GLASS_SENSOR_PIN_UP) == HIGH;
+    return true;
+    //return digitalRead(GLASS_SENSOR_PIN_UP) == HIGH;
 }
 
 inline bool is_glass_down() {
-    return digitalRead(GLASS_SENSOR_PIN_DOWN) == HIGH;
+    return true;
+    //return digitalRead(GLASS_SENSOR_PIN_DOWN) == HIGH;
 }
 
 void loop() {
