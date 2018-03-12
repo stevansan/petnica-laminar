@@ -8,7 +8,7 @@ const int ENCODER_PIN_A = 8;
 const int ENCODER_PIN_B = 9;
 const int ENCODER_BUTTON_PIN = 10;
 const int ENCODER_DELAY = 120;
-const int ENCODER_ROTATION_DELAY = 80;
+const int ENCODER_ROTATION_DELAY = 40;
 const int UV_PIN_OUT = A2;
 
 const int LATCH_BUTTON_DELAY = 600;
@@ -21,7 +21,7 @@ const int MOTOR_BUTTON_PIN = 11;
 const int MOTOR_PIN_OUT = 3;
 const int MOTOR_SPEEDUP_DELAY = 120;
 const int MOTOR_SLOWDOWN_DELAY = 40;
-const int MOTOR_SPEED_MAX = 64;
+const int MOTOR_SPEED_MAX = 255;
 
 bool motor_on = false;
 int motor_counter = 0;
@@ -54,8 +54,8 @@ void setup() {
     pinMode(ENCODER_PIN_B, INPUT);
     pinMode(UV_PIN_OUT, OUTPUT);
 
-    pinMode(GLASS_BUTTON_PIN_UP, INPUT);
-    pinMode(GLASS_BUTTON_PIN_DOWN, INPUT);
+    pinMode(GLASS_BUTTON_PIN_UP, INPUT_PULLUP);
+    pinMode(GLASS_BUTTON_PIN_DOWN, INPUT_PULLUP);
     pinMode(GLASS_SENSOR_PIN_UP, INPUT);
     pinMode(GLASS_SENSOR_PIN_DOWN, INPUT);
     pinMode(GLASS_MOVE_PIN_UP, OUTPUT);
@@ -105,7 +105,7 @@ inline bool is_motor_stopped() {
 }
 
 void check_encoder_button() {
-    if (digitalRead(ENCODER_BUTTON_PIN) == HIGH) {
+    if (digitalRead(ENCODER_BUTTON_PIN) == LOW) {
         if (uv_on) {
             uv_turn_off();
         } else {
@@ -119,8 +119,8 @@ void check_encoder_button() {
 inline void encoder_code() {
     // Set up UV delay
     int n = digitalRead(ENCODER_PIN_A);
-    if ((encoder_pin_A_last == LOW) && (n == HIGH)) {
-        if (digitalRead(ENCODER_PIN_B) == LOW) {
+    if ((encoder_pin_A_last == HIGH) && (n == LOW)) {
+        if (digitalRead(ENCODER_PIN_B) == HIGH) {
             encoder_pos--;
         } else {
             encoder_pos++;
@@ -224,8 +224,8 @@ inline void motor_code() {
 }
 
 inline void glass_code() {
-    bool glass_up = digitalRead(GLASS_BUTTON_PIN_UP) == HIGH;
-    bool glass_down = digitalRead(GLASS_BUTTON_PIN_DOWN) == HIGH;
+    bool glass_up = digitalRead(GLASS_BUTTON_PIN_UP) == LOW;
+    bool glass_down = digitalRead(GLASS_BUTTON_PIN_DOWN) == LOW;
     digitalWrite(GLASS_MOVE_PIN_UP, (!glass_up && glass_down) ? HIGH : LOW);
     digitalWrite(GLASS_MOVE_PIN_DOWN, (glass_up != glass_down) ? HIGH : LOW);
 }
